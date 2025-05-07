@@ -1,0 +1,16 @@
+name: Free VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Start SSH Session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
