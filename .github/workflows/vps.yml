@@ -1,16 +1,38 @@
-name: Free VPS
+name: Setup Ubuntu GUI Desktop on VPS
 
-on:
-  workflow_dispatch:
+on: 
+  push:
+    branches:
+      - main
 
 jobs:
-  run:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Start SSH Session
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: false
+      # Step 1: Update system and install GUI
+      - name: Install XFCE4 Desktop Environment and xRDP
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          
+          # Install XFCE4 Desktop and xRDP
+          sudo apt install -y xfce4 xfce4-goodies xrdp
+          
+          # Start and enable xrdp service
+          sudo systemctl enable xrdp
+          sudo systemctl start xrdp
+          
+          # Set up the user for xrdp session
+          sudo usermod -a -G ssl-cert $USER
+          
+          # Change default session to XFCE
+          echo "xfce4-session" > ~/.xsession
+
+      # Step 2: Provide connection details (for SSH or Web Shell)
+      - name: Display access information
+        run: |
+          echo "Your desktop is ready! Access it using the following info:"
+          echo "Web shell: https://tmate.io/t/4R3KGQWNxSCMbJNsQJLwdb5Yu"
+          echo "SSH: ssh 4R3KGQWNxSCMbJNsQJLwdb5Yu@sfo2.tmate.io"
